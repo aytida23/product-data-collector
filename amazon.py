@@ -29,8 +29,7 @@ def get_product_link_from_page(parent_link):
     all_kurti_links = kurti_soup.find_all("a")
     for each_kurti_link in all_kurti_links:
         link = each_kurti_link.get("href")
-        print(link)
-        pattern = re.compile('https://www.amazon.in/.*/dp.*')
+        pattern = re.compile('https:\/\/www.amazon.in\/[A-Za-z0-9_\-]+\/dp\/[A-Z0-9]+')
         try:
             result = pattern.findall(link)
             if result:
