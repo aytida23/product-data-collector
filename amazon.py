@@ -34,7 +34,7 @@ def get_product_link_from_page(parent_link):
                 get_links.append(result[0])
         except TypeError:
             pass
-    return get_links
+    return list(set(get_links))
 
 
 if __name__ == '__main__':
