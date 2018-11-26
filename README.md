@@ -1,1 +1,1 @@
-# kurti_read
+# comment collector
