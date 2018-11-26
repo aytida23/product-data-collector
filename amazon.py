@@ -2,7 +2,7 @@
 Amazon product comment collector
 '''
 # Importing libraries
-import urllib2
+import urllib.request as urllib2
 import re
 import sys
 from bs4 import BeautifulSoup
@@ -24,21 +24,19 @@ def get_product_link_from_page(parent_link):
     '''
     write a fucntion to read the given page and return product link from the page in a list
     '''
-    
+    get_links = []
     kurti_soup = BeautifulSoup(parent_link, 'lxml')
-
     all_kurti_links = kurti_soup.find_all("a")
-    
-    with open('all_links.txt', 'w') as f:
-        
-        for each_kurti_link in all_kurti_links:
-            link = each_kurti_link.get("href")
-            f.write(str(link)+'\n')
-        with open('all_links.txt', 'r') as ff:
-            for each in ff:
-                pattern = re.compile('https://www.amazon.in/.*/dp.*')
-                result = pattern.findall(each)
-                get_links.append(result)
+    for each_kurti_link in all_kurti_links:
+        link = each_kurti_link.get("href")
+        print(link)
+        pattern = re.compile('https://www.amazon.in/.*/dp.*')
+        try:
+            result = pattern.findall(link)
+            if result:
+                get_links.append(result[0])
+        except TypeError:
+            pass
     return(get_links)
 
 
