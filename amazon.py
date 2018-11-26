@@ -17,9 +17,7 @@ def kurti_read():
 
     return kurti_page
 
-parent_link = kurti_read()
 
-get_links = []
 def get_product_link_from_page(parent_link):
     '''
     write a fucntion to read the given page and return product link from the page in a list
@@ -39,4 +37,6 @@ def get_product_link_from_page(parent_link):
     return(get_links)
 
 
-print(get_product_link_from_page(parent_link))
+if __name__ == '__main__':
+    parent_link = kurti_read()
+    print(get_product_link_from_page(parent_link))
