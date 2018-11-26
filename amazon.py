@@ -7,21 +7,21 @@ import re
 import sys
 from bs4 import BeautifulSoup
 
-def kurti_read():
-    '''
-    Parse the url and return a html to the variable page
-    '''
-    product_kurti = 'https://www.amazon.in/kurti-Ethnic-Wear-Women/s?ie=UTF8&page=1&rh=n%3A1571271031%2Ck%3Akurti'
-    
-    kurti_page = urllib2.urlopen(product_kurti)
 
+def kurti_read():
+    """
+    :return: returns bs4 soup
+    """
+    product_kurti = 'https://www.amazon.in/kurti-Ethnic-Wear-Women/s?ie=UTF8&page=1&rh=n%3A1571271031%2Ck%3Akurti'
+    kurti_page = urllib2.urlopen(product_kurti)
     return kurti_page
 
 
 def get_product_link_from_page(parent_link):
-    '''
-    write a fucntion to read the given page and return product link from the page in a list
-    '''
+    """
+    :param parent_link: string: a http link
+    :return:list: a list of strings of web links
+    """
     get_links = []
     kurti_soup = BeautifulSoup(parent_link, 'lxml')
     all_kurti_links = kurti_soup.find_all("a")
@@ -34,7 +34,7 @@ def get_product_link_from_page(parent_link):
                 get_links.append(result[0])
         except TypeError:
             pass
-    return(get_links)
+    return get_links
 
 
 if __name__ == '__main__':
