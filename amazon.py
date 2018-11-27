@@ -74,21 +74,31 @@ def get_product_rating(product_link):
 
 def fetch_product_review_link(product_link):
     """
-    read comments from product link page.
+    fetch reviews page lin from each product link page.
     """
     
-    product_comment = []
     reviews_links = []
     for each_product in product_link:
         each_product_review_link = re.sub(r'/dp/','/product-reviews/', each_product)
         reviews_links.append(each_product_review_link)
-        #headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.90 Safari/537.36'}
-        #product_link_open = requests.get(each_product, headers=headers)
-        #product_soup = BeautifulSoup(product_link_open.content, 'lxml')
         
     return list(set(reviews_links))
 
 
+def fetch_max_page_limit(product_reviews_link):
+    """
+    fetch each individual comment from each product review page
+    """
+
+    max_page_number = []
+    for link in product_reviews_link:
+        headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.90 Safari/537.36'}
+        review_link_open = requests.get(link, headers=headers)
+        review_soup = BeautifulSoup(review_link_open.content, 'lxml')
+        page_numbers = review_soup.find_all("li", {'data-reftag' : 'cm_cr_arp_d_paging_btm'})
+        for each_page_num in page_numbers:
+            max_page_number.append((each_page_num).text.split())
+    return (max_page_number)
 
     
 def get_next_parent_page_link(parent_link):
@@ -106,4 +116,5 @@ if __name__ == '__main__':
     parent_link = kurti_read()
     product_link = get_product_link_from_page(parent_link)
     product_reviews_link = fetch_product_review_link(product_link)
-    print(product_reviews_link)
+    max_page = fetch_max_page_limit(product_reviews_link)
+    print(max_page)
