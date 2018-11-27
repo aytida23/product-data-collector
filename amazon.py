@@ -72,7 +72,7 @@ def get_product_rating(product_link):
     return (product_rating)
 
 
-def fetch_comments_link(product_link):
+def fetch_product_review_link(product_link):
     """
     read comments from product link page.
     """
@@ -105,5 +105,5 @@ def get_next_parent_page_link(parent_link):
 if __name__ == '__main__':
     parent_link = kurti_read()
     product_link = get_product_link_from_page(parent_link)
-    product_reviews_link = fetch_comments_link(product_link)
+    product_reviews_link = fetch_product_review_link(product_link)
     print(product_reviews_link)
