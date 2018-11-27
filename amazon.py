@@ -90,7 +90,7 @@ def fetch_comments_link(product_link):
             try:
                 result = pattern.findall(link)
                 if result:
-                    get_links.append(result[0])
+                    get_links.append(result)
             except TypeError:
                 pass
     return list(set(get_links))
