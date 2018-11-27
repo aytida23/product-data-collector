@@ -38,20 +38,62 @@ def get_product_link_from_page(parent_link):
             pass
     return list(set(get_links))
 
-def read_comment(product_link):
+def get_product_title(product_link):
     """
-    read comments from product link page.
+    get each product title
     """
+    
+    product_title = []
     for each_product in product_link:
         headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.90 Safari/537.36'}
         product_link_open = requests.get(each_product, headers=headers)
         product_soup = BeautifulSoup(product_link_open.content, 'lxml')
         product_title = product_soup.find("div", {'id' : 'titleSection'})
+        product_title.append(product_title.find("h1", {'id' : 'title'}).text.strip())
+    return (product_title)
+
+
+def get_product_rating(product_link):
+    """
+    get each product rating
+    """
+    
+    product_rating = []
+    for each_product in product_link:
+        headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.90 Safari/537.36'}
+        product_link_open = requests.get(each_product, headers=headers)
+        product_soup = BeautifulSoup(product_link_open.content, 'lxml')
         product_review = product_soup.find("div", {'id' : 'averageCustomerReviews'})
-        print(product_title.find("h1", {'id' : 'title'}).text.strip())
-        print(product_review.find("span", {'class' : 'a-icon-alt'}).text.strip())
+        try:
+            product_rating.append(product_review.find("span", {'class' : 'a-icon-alt'}).text.strip())
+        except AttributeError:
+            print('No rating yet.')
+            pass
+    return (product_rating)
 
 
+def fetch_comments_link(product_link):
+    """
+    read comments from product link page.
+    """
+    
+    product_comment = []
+    get_links = []
+    for each_product in product_link:
+        headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.90 Safari/537.36'}
+        product_link_open = requests.get(each_product, headers=headers)
+        product_soup = BeautifulSoup(product_link_open.content, 'lxml')
+        all_comments_link = product_soup.find_all("a")
+        for each_reviews_link in all_comments_link:
+            link = each_reviews_link.get("href")
+            pattern = re.compile('https://www.amazon.in/.*/product-reviews/\w+/')
+            try:
+                result = pattern.findall(link)
+                if result:
+                    get_links.append(result[0])
+            except TypeError:
+                pass
+    return list(set(get_links))
 
 
 
@@ -70,4 +112,4 @@ def get_next_parent_page_link(parent_link):
 if __name__ == '__main__':
     parent_link = kurti_read()
     product_link = get_product_link_from_page(parent_link)
-    read_comment(product_link)
+    print(fetch_comments_link(product_link))
