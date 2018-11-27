@@ -59,17 +59,20 @@ def get_product_rating(product_link):
     """
     
     product_rating = []
+    count = 0
     for each_product in product_link:
         headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.90 Safari/537.36'}
         product_link_open = requests.get(each_product, headers=headers)
         product_soup = BeautifulSoup(product_link_open.content, 'lxml')
         product_review = product_soup.find("div", {'id' : 'averageCustomerReviews'})
         try:
-            product_rating.append(product_review.find("span", {'class' : 'a-icon-alt'}).text.strip())
+            print(product_review.find("span", {'class' : 'a-icon-alt'}).text.strip())
+            count += 1
         except AttributeError:
             print('No rating yet.')
             pass
-    return (product_rating)
+    print(count)
+    #return (product_rating)
 
 
 def get_product_review(product_link):
@@ -83,14 +86,12 @@ def get_product_review(product_link):
         headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.90 Safari/537.36'}
         product_link_open = requests.get(each_product, headers=headers)
         product_soup = BeautifulSoup(product_link_open.content, 'lxml')
-        product_review = product_soup.find("div", {'id' : 'averageCustomerReviews'})
-        try:
-            print(product_review.find("span", {'class' : 'a-size-base'}).text.strip())
-            count += 1
-        except AttributeError:
-            print('No review yet.')
-            pass
+        product_reviews = product_soup.find("div", {'id' : 'averageCustomerReviews'})
+        product_review.append(product_reviews.find("span", {'class' : 'a-size-base'}).text.strip())
+        count += 1
+        
     print(count)
+    return(product_review)
 
 
 def get_product_price(product_link):
@@ -105,13 +106,12 @@ def get_product_price(product_link):
         product_link_open = requests.get(each_product, headers=headers)
         product_soup = BeautifulSoup(product_link_open.content, 'lxml')
         product_prices = product_soup.find("div", {'id' : 'desktop_unifiedPrice'})
-        try:
-            prices = product_prices.find("span", {'id' : 'priceblock_ourprice'})
-            print(prices.text.strip())
-            count += 1
-        except AttributeError:
-            pass
+        prices = product_prices.find("span", {'class' : 'a-size-medium a-color-price'})
+        product_price.append(prices.text.strip())
+        count += 1
+        
     print(count)
+    return(product_price)
         
 
 
@@ -146,13 +146,13 @@ def get_product_price(product_link):
     return(max_page_number)'''
 
 
-def get_next_parent_page_link(parent_link):
+'''def get_next_parent_page_link(parent_link):
     """
     get the next page containing catalog of product..in real life this is the page 2,3,4 of the search result
 
     returns : string : is a web link
     """
-    #todo
+    #todo'''
 
 
 
@@ -160,4 +160,6 @@ def get_next_parent_page_link(parent_link):
 if __name__ == '__main__':
     parent_link = kurti_read()
     product_link = get_product_link_from_page(parent_link)
-    get_product_price(product_link)
+    each_product_title = get_product_title(product_link)
+    get_product_rating(product_link)
+    each_product_price = get_product_price(product_link)
