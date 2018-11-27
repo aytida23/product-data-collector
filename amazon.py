@@ -2,6 +2,7 @@
 Amazon product comment collector
 '''
 # Importing libraries
+import requests
 import urllib.request as urllib2
 import re
 import sys
@@ -12,8 +13,9 @@ def kurti_read():
     """
     :return: returns bs4 soup
     """
+    headers = { 'User-Agent': 'Mozilla/5.0 (Windows NT 6.0; WOW64; rv:24.0) Gecko/20100101 Firefox/24.0' }
     product_kurti = 'https://www.amazon.in/kurti-Ethnic-Wear-Women/s?ie=UTF8&page=1&rh=n%3A1571271031%2Ck%3Akurti'
-    kurti_page = urllib2.urlopen(product_kurti)
+    kurti_page = requests.get(product_kurti, headers=headers)
     return kurti_page
 
 
@@ -23,7 +25,7 @@ def get_product_link_from_page(parent_link):
     :return:list: a list of strings of web links
     """
     get_links = []
-    kurti_soup = BeautifulSoup(parent_link, 'lxml')
+    kurti_soup = BeautifulSoup(parent_link.content, 'lxml')
     all_kurti_links = kurti_soup.find_all("a")
     for each_kurti_link in all_kurti_links:
         link = each_kurti_link.get("href")
@@ -36,7 +38,36 @@ def get_product_link_from_page(parent_link):
             pass
     return list(set(get_links))
 
+def read_comment(product_link):
+    """
+    read comments from product link page.
+    """
+    for each_product in product_link:
+        headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.90 Safari/537.36'}
+        product_link_open = requests.get(each_product, headers=headers)
+        product_soup = BeautifulSoup(product_link_open.content, 'lxml')
+        product_title = product_soup.find("div", {'id' : 'titleSection'})
+        product_review = product_soup.find("div", {'id' : 'averageCustomerReviews'})
+        print(product_title.find("h1", {'id' : 'title'}).text.strip())
+        print(product_review.find("span", {'class' : 'a-icon-alt'}).text.strip())
+
+
+
+
+
+    
+def get_next_parent_page_link(parent_link):
+    """
+    get the next page containing catalog of product..in real life this is the page 2,3,4 of the search result
+
+    returns : string : is a web link
+    """
+    #todo
+
+
+
 
 if __name__ == '__main__':
     parent_link = kurti_read()
-    print(get_product_link_from_page(parent_link))
+    product_link = get_product_link_from_page(parent_link)
+    read_comment(product_link)
