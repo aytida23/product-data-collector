@@ -78,22 +78,15 @@ def fetch_comments_link(product_link):
     """
     
     product_comment = []
-    get_links = []
+    reviews_links = []
     for each_product in product_link:
-        headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.90 Safari/537.36'}
-        product_link_open = requests.get(each_product, headers=headers)
-        product_soup = BeautifulSoup(product_link_open.content, 'lxml')
-        all_comments_link = product_soup.find_all("a")
-        for each_reviews_link in all_comments_link:
-            link = each_reviews_link.get("href")
-            pattern = re.compile('https://www.amazon.in/.*/product-reviews/\w+/')
-            try:
-                result = pattern.findall(link)
-                if result:
-                    get_links.append(result)
-            except TypeError:
-                pass
-    return list(set(get_links))
+        each_product_review_link = re.sub(r'/dp/','/product-reviews/', each_product)
+        reviews_links.append(each_product_review_link)
+        #headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.90 Safari/537.36'}
+        #product_link_open = requests.get(each_product, headers=headers)
+        #product_soup = BeautifulSoup(product_link_open.content, 'lxml')
+        
+    return list(set(reviews_links))
 
 
 
@@ -112,4 +105,5 @@ def get_next_parent_page_link(parent_link):
 if __name__ == '__main__':
     parent_link = kurti_read()
     product_link = get_product_link_from_page(parent_link)
-    print(fetch_comments_link(product_link))
+    product_reviews_link = fetch_comments_link(product_link)
+    print(product_reviews_link)
