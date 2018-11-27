@@ -51,7 +51,7 @@ def get_product_title(product_link):
         product_link_open = requests.get(each_product, headers=headers)
         product_soup = BeautifulSoup(product_link_open.content, 'lxml')
         productName = product_soup.find("div", {'id' : 'titleSection'})
-        print(productName.find("h1", {'id' : 'title'}).text.strip())
+        print(productName.find("span", {'id' : 'productTitle'}).text.strip())
         count += 1
 
     print(count)
@@ -165,5 +165,5 @@ if __name__ == '__main__':
     parent_link = kurti_read()
     product_link = get_product_link_from_page(parent_link)
     get_product_title(product_link)
-    get_product_rating(product_link)
+    #get_product_rating(product_link)
     #each_product_price = get_product_price(product_link)
