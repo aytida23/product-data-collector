@@ -182,23 +182,27 @@ def get_product_price(product_link):
     return(max_page_number)'''
 
 
-def get_next_parent_page_link():
+def get_next_parent_page_link(parent_link):
     """
     get the next page containing catalog of product..in real life this is the page 2,3,4 of the search result
 
     returns : string : is a web link
     """
     #todo
-    for i in range(1, 401):
+    kurti_soup = BeautifulSoup(parent_link.content, 'lxml')
+    bottom_next_page_bar = kurti_soup.find("div", {'id' : 'centerBelowMinus'})
+    last_page = int(bottom_next_page_bar.find("span", {'class' : 'pagnDisabled'}).text.strip())
+    for i in range(1, last_page+1):
         link = 'https://www.amazon.in/kurti-Clothing-Accessories/s?ie=UTF8&page={}&rh=n%3A1571271031%2Ck%3Akurti'.format(i)
         print(link)
-
+        
+    
 
 
 if __name__ == '__main__':
     parent_link = kurti_read()
     product_link = get_product_link_from_page(parent_link)
     #get_product_title(product_link)
-    get_next_parent_page_link()
+    get_next_parent_page_link(parent_link)
     #get_product_rating(product_link)
     #each_product_price = get_product_price(product_link)
