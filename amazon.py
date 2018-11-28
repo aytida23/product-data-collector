@@ -49,24 +49,17 @@ def headerrs():
     return (headrs)
 
 
-def kurti_read(url):
-    """
-    :return: returns parsed html page
-    """
-    
-    kurti_page = requests.get(url, headers=headerrs())
-    return (kurti_page)
-
-
 def get_product_link_from_page(parent_link):
     """
     :param parent_link: string: a http link
     :return:list: a list of strings of web links
     """
     get_links = []
-    kurti_soup = BeautifulSoup(parent_link.content, 'lxml')
-    all_kurti_links = kurti_soup.find_all("a")
-    for each_kurti_link in all_kurti_links:
+    
+    for each_kurti_link in parent_link:
+        kurti_page = requests.get(each_kurti_link, headers=headerrs())
+        kurti_soup = BeautifulSoup(kurti_page.content, 'lxml')
+        all_kurti_links = kurti_soup.find_all("a")
         link = each_kurti_link.get("href")
         pattern = re.compile('https:\/\/www.amazon.in\/[A-Za-z0-9_\-]+\/dp\/[A-Z0-9]+')
         try:
@@ -338,10 +331,5 @@ def get_next_parent_page_link():
 
 if __name__ == '__main__':
     prod_urls = get_next_parent_page_link()
-    print(prod_urls)
-    #parent_link = kurti_read(prod_urls)
-    #urls = get_product_link_from_page(parent_link)
-    #print(get_product_title(urls))
-    #get_product_title(product_link)
-    #get_product_rating(product_link)
-    #each_product_price = get_product_price(product_link)
+    abcd = get_product_link_from_page(prod_urls)
+    print(abcd)
