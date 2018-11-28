@@ -203,4 +203,5 @@ def get_next_parent_page_link():
 
 if __name__ == '__main__': 
     abcd = get_product_link_from_page(get_next_parent_page_link())
-    print(abcd)
+    xyza = get_product_title(abcd)
+    print(xyza)
