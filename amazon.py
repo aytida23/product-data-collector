@@ -282,7 +282,10 @@ def get_next_parent_page_link():
     returns : string : is a web link
     """
     #todo
-    kurti_soup = BeautifulSoup(parent_link.content, 'lxml')
+    parent_link = 'https://www.amazon.in/kurti-Clothing-Accessories/s?ie=UTF8&page=1&rh=n%3A1571271031%2Ck%3Akurti'
+    headers = { 'User-Agent': 'Mozilla/5.0 (Windows NT 6.0; WOW64; rv:24.0) Gecko/20100101 Firefox/24.0' }
+    kurti_page = requests.get(parent_link, headers=headers)
+    kurti_soup = BeautifulSoup(kurti_page.content, 'lxml')
     bottom_next_page_bar = kurti_soup.find("div", {'id' : 'centerBelowMinus'})
     last_page = int(bottom_next_page_bar.find("span", {'class' : 'pagnDisabled'}).text.strip())
     for i in range(1, last_page+1):
