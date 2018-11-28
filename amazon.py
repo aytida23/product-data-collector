@@ -13,9 +13,39 @@ def kurti_read(url):
     """
     :return: returns parsed html page
     """
-    headers = { 'User-Agent': 'Mozilla/5.0 (Windows NT 6.0; WOW64; rv:24.0) Gecko/20100101 Firefox/24.0' }
-    #product_kurti = 'https://www.amazon.in/kurti-Clothing-Accessories/s?ie=UTF8&page=1&rh=n%3A1571271031%2Ck%3Akurti'
-    kurti_page = requests.get(url, headers=headers)
+    head1 = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',
+   'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+   'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
+   'Accept-Encoding': 'none',
+   'Accept-Language': 'en-US,en;q=0.8',
+   'Connection': 'keep-alive'}
+    head2 = {'User-Agent': 'Mozilla/5.0 (Windows; U; MSIE 9.0; Windows NT 9.0; en-US)',
+   'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+   'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
+   'Accept-Encoding': 'none',
+   'Accept-Language': 'en-US,en;q=0.8',
+   'Connection': 'keep-alive'}
+    head3 = {'User-Agent': 'Mozilla/5.0 (compatible; MSIE 10.0; Macintosh; Intel Mac OS X 10_7_3; Trident/6.0)',
+   'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+   'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
+   'Accept-Encoding': 'none',
+   'Accept-Language': 'en-US,en;q=0.8',
+   'Connection': 'keep-alive'}
+    head4 = {'User-Agent': 'Opera/9.80 (X11; Linux i686; U; ru) Presto/2.8.131 Version/11.11',
+   'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+   'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
+   'Accept-Encoding': 'none',
+   'Accept-Language': 'en-US,en;q=0.8',
+   'Connection': 'keep-alive'}
+    head5 = {'User-Agent': 'Mozilla/5.0 (iPad; CPU OS 6_0 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Version/6.0 Mobile/10A5355d Safari/8536.25',
+   'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+   'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
+   'Accept-Encoding': 'none',
+   'Accept-Language': 'en-US,en;q=0.8',
+   'Connection': 'keep-alive'}
+
+    headrs = random.choice([head1,head2,head3,head4,head5])
+    kurti_page = requests.get(url, headers=headrs)
     return (kurti_page)
 
 
@@ -281,7 +311,7 @@ def get_next_parent_page_link():
 
     returns : string : is a web link
     """
-    #todo
+    
     parent_link = 'https://www.amazon.in/kurti-Clothing-Accessories/s?ie=UTF8&page=1&rh=n%3A1571271031%2Ck%3Akurti'
     headers = { 'User-Agent': 'Mozilla/5.0 (Windows NT 6.0; WOW64; rv:24.0) Gecko/20100101 Firefox/24.0' }
     kurti_page = requests.get(parent_link, headers=headers)
@@ -291,6 +321,7 @@ def get_next_parent_page_link():
     for i in range(1, last_page+1):
         link = 'https://www.amazon.in/kurti-Clothing-Accessories/s?ie=UTF8&page={}&rh=n%3A1571271031%2Ck%3Akurti'.format(i)
         product_url = kurti_read(link)
+        
     return (product_url)
         
     
@@ -300,7 +331,7 @@ if __name__ == '__main__':
     prod_urls = get_next_parent_page_link()
     parent_link = kurti_read(prod_urls)
     urls = get_product_link_from_page(parent_link)
-    
+    print(get_product_title(urls))
     #get_product_title(product_link)
     #get_product_rating(product_link)
     #each_product_price = get_product_price(product_link)
