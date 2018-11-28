@@ -118,7 +118,7 @@ def get_product_review(product_link):
     product_review = []
     count = 0
     for each_product in product_link:
-        product_link_open = requests.get(each_product, headers=headerrs)
+        product_link_open = requests.get(each_product, headers=headerrs())
         product_soup = BeautifulSoup(product_link_open.content, 'lxml')
         each_product_review = product_soup.find("div", {'id' : 'averageCustomerReviews'})
         product_review.append(each_product_review.find("span", {'class' : 'a-size-base'}).text.strip())
@@ -136,7 +136,7 @@ def get_product_price(product_link):
     product_price = []
     count = 0
     for each_product in product_link:
-        product_link_open = requests.get(each_product, headers=headerrs)
+        product_link_open = requests.get(each_product, headers=headerrs())
         product_soup = BeautifulSoup(product_link_open.content, 'lxml')
         each_product_price = product_soup.find("div", {'id' : 'desktop_unifiedPrice'})
         prices = each_product_price.find("span", {'class' : 'a-size-medium a-color-price'})
@@ -188,8 +188,7 @@ def get_next_parent_page_link():
 
     page_linkss = []
     parent_link = 'https://www.amazon.in/kurti-Clothing-Accessories/s?ie=UTF8&page=1&rh=n%3A1571271031%2Ck%3Akurti'
-    headers = { 'User-Agent': 'Mozilla/5.0 (Windows NT 6.0; WOW64; rv:24.0) Gecko/20100101 Firefox/24.0' }
-    kurti_page = requests.get(parent_link, headers=headers)
+    kurti_page = requests.get(parent_link, headers=headerrs())
     kurti_soup = BeautifulSoup(kurti_page.content, 'lxml')
     bottom_next_page_bar = kurti_soup.find("div", {'id' : 'centerBelowMinus'})
     last_page = int(bottom_next_page_bar.find("span", {'class' : 'pagnDisabled'}).text.strip())
