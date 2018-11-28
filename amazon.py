@@ -8,11 +8,11 @@ import re
 import random
 from bs4 import BeautifulSoup
 
+def headerrs():
+    """
+    return different random headers
+    """
 
-def kurti_read(url):
-    """
-    :return: returns parsed html page
-    """
     head1 = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',
    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
    'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
@@ -45,7 +45,16 @@ def kurti_read(url):
    'Connection': 'keep-alive'}
 
     headrs = random.choice([head1,head2,head3,head4,head5])
-    kurti_page = requests.get(url, headers=headrs)
+
+    return (headrs)
+
+
+def kurti_read(url):
+    """
+    :return: returns parsed html page
+    """
+    
+    kurti_page = requests.get(url, headers=headerrs())
     return (kurti_page)
 
 
@@ -320,9 +329,7 @@ def get_next_parent_page_link():
     last_page = int(bottom_next_page_bar.find("span", {'class' : 'pagnDisabled'}).text.strip())
     for i in range(1, last_page+1):
         link = 'https://www.amazon.in/kurti-Clothing-Accessories/s?ie=UTF8&page={}&rh=n%3A1571271031%2Ck%3Akurti'.format(i)
-        product_url = kurti_read(link)
-        
-    return (product_url)
+        kurti_read(link)
         
     
 
