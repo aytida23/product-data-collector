@@ -329,16 +329,17 @@ def get_next_parent_page_link():
     last_page = int(bottom_next_page_bar.find("span", {'class' : 'pagnDisabled'}).text.strip())
     for i in range(1, last_page+1):
         link = 'https://www.amazon.in/kurti-Clothing-Accessories/s?ie=UTF8&page={}&rh=n%3A1571271031%2Ck%3Akurti'.format(i)
-        kurti_read(link)
+    return(link)
         
     
 
 
 if __name__ == '__main__':
     prod_urls = get_next_parent_page_link()
-    parent_link = kurti_read(prod_urls)
-    urls = get_product_link_from_page(parent_link)
-    print(get_product_title(urls))
+    print(prod_urls)
+    #parent_link = kurti_read(prod_urls)
+    #urls = get_product_link_from_page(parent_link)
+    #print(get_product_title(urls))
     #get_product_title(product_link)
     #get_product_rating(product_link)
     #each_product_price = get_product_price(product_link)
