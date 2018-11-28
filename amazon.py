@@ -7,148 +7,136 @@ import urllib.request as urllib2
 import re
 import random
 from bs4 import BeautifulSoup
+import pandas as pd
+
+
+def get_page_soup(link):
+    """
+    get the bs4 soup of a page
+    :param link:string: http link
+    :return: bs4 soup
+    """
+    product_link_open = requests.get(link, headers=headerrs())
+    return BeautifulSoup(product_link_open.content, 'lxml')
+
 
 def headerrs():
     """
     return different random headers
     """
 
-    head1 = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',
-   'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-   'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
-   'Accept-Encoding': 'none',
-   'Accept-Language': 'en-US,en;q=0.8',
-   'Connection': 'keep-alive'}
+    head1 = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 '
+                           'Safari/537.11',
+             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+             'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
+             'Accept-Encoding': 'none',
+             'Accept-Language': 'en-US,en;q=0.8',
+             'Connection': 'keep-alive'
+             }
+
     head2 = {'User-Agent': 'Mozilla/5.0 (Windows; U; MSIE 9.0; Windows NT 9.0; en-US)',
-   'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-   'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
-   'Accept-Encoding': 'none',
-   'Accept-Language': 'en-US,en;q=0.8',
-   'Connection': 'keep-alive'}
+             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+             'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
+             'Accept-Encoding': 'none',
+             'Accept-Language': 'en-US,en;q=0.8',
+             'Connection': 'keep-alive'
+             }
+
     head3 = {'User-Agent': 'Mozilla/5.0 (compatible; MSIE 10.0; Macintosh; Intel Mac OS X 10_7_3; Trident/6.0)',
-   'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-   'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
-   'Accept-Encoding': 'none',
-   'Accept-Language': 'en-US,en;q=0.8',
-   'Connection': 'keep-alive'}
+             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+             'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
+             'Accept-Encoding': 'none',
+             'Accept-Language': 'en-US,en;q=0.8',
+             'Connection': 'keep-alive'
+             }
+
     head4 = {'User-Agent': 'Opera/9.80 (X11; Linux i686; U; ru) Presto/2.8.131 Version/11.11',
-   'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-   'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
-   'Accept-Encoding': 'none',
-   'Accept-Language': 'en-US,en;q=0.8',
-   'Connection': 'keep-alive'}
-    head5 = {'User-Agent': 'Mozilla/5.0 (iPad; CPU OS 6_0 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Version/6.0 Mobile/10A5355d Safari/8536.25',
-   'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-   'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
-   'Accept-Encoding': 'none',
-   'Accept-Language': 'en-US,en;q=0.8',
-   'Connection': 'keep-alive'}
+             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+             'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
+             'Accept-Encoding': 'none',
+             'Accept-Language': 'en-US,en;q=0.8',
+             'Connection': 'keep-alive'
+             }
+
+    head5 = {'User-Agent': 'Mozilla/5.0 (iPad; CPU OS 6_0 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) '
+                           'Version/6.0 Mobile/10A5355d Safari/8536.25',
+             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+             'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
+             'Accept-Encoding': 'none',
+             'Accept-Language': 'en-US,en;q=0.8',
+             'Connection': 'keep-alive'}
 
     headrs = random.choice([head1,head2,head3,head4,head5])
 
-    return (headrs)
+    return headrs
 
 
-def get_product_link_from_page(parent_link):
+def get_product_link_from_page(search_page_link):
     """
-    :param parent_link: string: a http link
+    :param search_page_link: string: a http link
     :return:list: a list of strings of web links
     """
     get_links = []
-    for each_link in parent_link:
-        kurti_page = requests.get(each_link, headers=headerrs())
-        kurti_soup = BeautifulSoup(kurti_page.content, 'lxml')
-        all_kurti_links = kurti_soup.find_all("a")
-        for each_kurti_link in all_kurti_links:
-            link = each_kurti_link.get("href")
-            pattern = re.compile('https:\/\/www.amazon.in\/[A-Za-z0-9_\-]+\/dp\/[A-Z0-9]+')
-            try:
-                result = pattern.findall(link)
-                if result:
-                    get_links.append(result[0])
-            except TypeError:
-                pass
+    kurti_page = requests.get(search_page_link, headers=headerrs())
+    kurti_soup = BeautifulSoup(kurti_page.content, 'lxml')
+    all_kurti_links = kurti_soup.find_all("a")
+    for each_kurti_link in all_kurti_links:
+        link = each_kurti_link.get("href")
+        pattern = re.compile('https:\/\/www.amazon.in\/[A-Za-z0-9_\-]+\/dp\/[A-Z0-9]+')
+        try:
+            result = pattern.findall(link)
+            if result:
+                get_links.append(result[0])
+        except TypeError:
+            pass
     return list(set(get_links))
 
 
-def get_product_title(product_link):
+def get_product_title(product_page_soup):
     """
     get each product title
+    :param product_page_soup: bs4 soup: soup of a product page
+    :return: string: product name
     """
-    
-    product_title = []
-    count = 0
-    for each_product in product_link:
-        product_link_open = requests.get(each_product, headers=headerrs())
-        product_soup = BeautifulSoup(product_link_open.content, 'lxml')
-        productName = product_soup.find("div", {'id' : 'titleBlock'})
-        product_title.append(productName.find("span", {'id' : 'productTitle'}).text.strip())
-        count += 1
-
-    print(count)
-    return (product_title)
+    productname = product_page_soup.find("div", {'id': 'titleBlock'})
+    return productname.find("span", {'id': 'productTitle'}).text.strip()
 
 
-def get_product_rating(product_link):
+def get_product_rating(product_page_soup):
     """
     get each product rating
+    :param product_page_soup: bs4 soup: soup of a product page
+    :return: string: product rating
     """
-    
-    product_rating = []
-    count = 0
-    for each_product in product_link:
-        product_link_open = requests.get(each_product, headers=headerrs())
-        product_soup = BeautifulSoup(product_link_open.content, 'lxml')
-        each_product_rating = product_soup.find("div", {'id' : 'averageCustomerReviews'})
-        try:
-            print(each_product_rating.find("span", {'class' : 'a-icon-alt'}).text.strip())
-            count += 1
-        except AttributeError:
-            print('No rating yet.')
-            pass
-    print(count)
-    return (product_rating)
+    each_product_rating = product_page_soup.find("div", {'id': 'averageCustomerReviews'})
+    try:
+        return each_product_rating.find("span", {'class': 'a-icon-alt'}).text.strip()
+
+    except AttributeError:
+        return None
 
 
-def get_product_review(product_link):
+def get_product_review(product_page_soup):
     """
     get product total number of review
+    :param product_page_soup: bs4 soup: soup of a product page
+    :return:string
     """
-
-    product_review = []
-    count = 0
-    for each_product in product_link:
-        product_link_open = requests.get(each_product, headers=headerrs())
-        product_soup = BeautifulSoup(product_link_open.content, 'lxml')
-        each_product_review = product_soup.find("div", {'id' : 'averageCustomerReviews'})
-        product_review.append(each_product_review.find("span", {'class' : 'a-size-base'}).text.strip())
-        count += 1
-        
-    print(count)
-    return(product_review)
+    each_product_review = product_page_soup.find("div", {'id': 'averageCustomerReviews'})
+    return each_product_review.find("span", {'class': 'a-size-base'}).text.strip()
 
 
-def get_product_price(product_link):
+def get_product_price(product_page_soup):
     """
     get product total number of review
+    :param product_page_soup: bs4 soup: soup of a product page
+    :return: string
     """
 
-    product_price = []
-    count = 0
-    for each_product in product_link:
-        product_link_open = requests.get(each_product, headers=headerrs())
-        product_soup = BeautifulSoup(product_link_open.content, 'lxml')
-        each_product_price = product_soup.find("div", {'id' : 'desktop_unifiedPrice'})
-        prices = each_product_price.find("span", {'class' : 'a-size-medium a-color-price'})
-        product_price.append(prices.text.strip())
-        count += 1
-        
-    print(count)
-    return(product_price)
-        
+    each_product_price = product_page_soup.find("div", {'id': 'desktop_unifiedPrice'})
+    prices = each_product_price.find("span", {'class': 'a-size-medium a-color-price'})
+    return prices.text.strip()
 
-
-    
 
 '''def fetch_product_review_link(product_link):
     """
@@ -160,10 +148,10 @@ def get_product_price(product_link):
         each_product_review_link = re.sub(r'/dp/','/product-reviews/', each_product)
         reviews_links.append(each_product_review_link)
         
-    return list(set(reviews_links))'''
+    return list(set(reviews_links))
 
 
-'''def fetch_max_page_limit(product_reviews_link):
+    def fetch_max_page_limit(product_reviews_link):
     """
     fetch each individual comment from each product review page
     """
@@ -179,28 +167,70 @@ def get_product_price(product_link):
     return(max_page_number)'''
 
 
-def get_next_parent_page_link():
+def get_next_parent_page_link(parent_link):
     """
     get the next page containing catalog of product..in real life this is the page 2,3,4 of the search result
-
-    returns : string : is a web link
+    @:param parent_link: string: http link
+    :returns : list: string : is a web link
     """
 
     page_linkss = []
-    parent_link = 'https://www.amazon.in/kurti-Clothing-Accessories/s?ie=UTF8&page=1&rh=n%3A1571271031%2Ck%3Akurti'
+    # parent_link = 'https://www.amazon.in/kurti-Clothing-Accessories/s?ie=UTF8&page=1&rh=n%3A1571271031%2Ck%3Akurti'
     kurti_page = requests.get(parent_link, headers=headerrs())
     kurti_soup = BeautifulSoup(kurti_page.content, 'lxml')
-    bottom_next_page_bar = kurti_soup.find("div", {'id' : 'centerBelowMinus'})
-    last_page = int(bottom_next_page_bar.find("span", {'class' : 'pagnDisabled'}).text.strip())
+    bottom_next_page_bar = kurti_soup.find("div", {'id': 'centerBelowMinus'})
+    last_page = int(bottom_next_page_bar.find("span", {'class': 'pagnDisabled'}).text.strip())
     for i in range(1, last_page+1):
         link = 'https://www.amazon.in/kurti-Clothing-Accessories/s?ie=UTF8&page={}&rh=n%3A1571271031%2Ck%3Akurti'.format(i)
         page_linkss.append(link)
-    return(page_linkss)
-        
-    
+    return page_linkss
 
 
-if __name__ == '__main__': 
-    abcd = get_product_link_from_page(get_next_parent_page_link())
-    xyza = get_product_title(abcd)
-    print(xyza)
+def read_product_page_data(link):
+    """
+    get all values from a product page data
+    :param link:string: http link
+    :return:string
+    """
+    soup = get_page_soup(link)
+    product_title = get_product_title(soup)
+    product_price = get_product_price(soup)
+    product_rating = get_product_rating(soup)
+    product_review = get_product_review(soup)
+
+    return [product_title, product_price, product_rating, product_review]
+
+
+def get_all_product_data(parent_link):
+    """
+    mother load
+    :param parent_link:string: http
+    :return:list of list
+    """
+    all_search_page_links = get_next_parent_page_link(parent_link)
+    full_data = []
+    for search_page in all_search_page_links:
+        all_product_links = get_product_link_from_page(search_page)
+        for link in all_product_links:
+            individual_product = read_product_page_data(link)
+            full_data.append(individual_product)
+    return full_data
+
+
+def convert_to_dataframe(list_of_list):
+    """
+
+    :param list_of_list: ["product_title","product_price","product_rating","product_review"]
+    :return: pandas.DataFame
+    """
+
+    header = ["product_title","product_price","product_rating","product_review"]
+    df = pd.DataFrame(list_of_list, columns=header)
+    return df
+
+
+if __name__ == '__main__':
+    PARENT_LINK = 'https://www.amazon.in/kurti-Clothing-Accessories/s?ie=UTF8&page=1&rh=n%3A1571271031%2Ck%3Akurti'
+    data = get_all_product_data(PARENT_LINK)
+    print(convert_to_dataframe(data))
+
