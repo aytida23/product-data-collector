@@ -55,13 +55,12 @@ def get_product_link_from_page(parent_link):
     :return:list: a list of strings of web links
     """
     get_links = []
-    
-    for each_kurti_link in parent_link:
-        kurti_page = requests.get(each_kurti_link, headers=headerrs())
+    for each_link in parent_link:
+        kurti_page = requests.get(each_link, headers=headerrs())
         kurti_soup = BeautifulSoup(kurti_page.content, 'lxml')
-        for each in kurti_soup.find_all("a"):
-        #all_kurti_links = kurti_soup.find_all("a")
-            link = each.get("href")
+        all_kurti_links = kurti_soup.find_all("a")
+        for each_kurti_link in all_kurti_links:
+            link = each_kurti_link.get("href")
             pattern = re.compile('https:\/\/www.amazon.in\/[A-Za-z0-9_\-]+\/dp\/[A-Z0-9]+')
             try:
                 result = pattern.findall(link)
