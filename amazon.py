@@ -59,15 +59,16 @@ def get_product_link_from_page(parent_link):
     for each_kurti_link in parent_link:
         kurti_page = requests.get(each_kurti_link, headers=headerrs())
         kurti_soup = BeautifulSoup(kurti_page.content, 'lxml')
-        all_kurti_links = kurti_soup.find_all("a")
-        link = all_kurti_links.get("href")
-        pattern = re.compile('https:\/\/www.amazon.in\/[A-Za-z0-9_\-]+\/dp\/[A-Z0-9]+')
-        try:
-            result = pattern.findall(link)
-            if result:
-                get_links.append(result[0])
-        except TypeError:
-            pass
+        for each in kurti_soup.find_all("a"):
+        #all_kurti_links = kurti_soup.find_all("a")
+            link = each.get("href")
+            pattern = re.compile('https:\/\/www.amazon.in\/[A-Za-z0-9_\-]+\/dp\/[A-Z0-9]+')
+            try:
+                result = pattern.findall(link)
+                if result:
+                    get_links.append(result[0])
+            except TypeError:
+                pass
     return list(set(get_links))
 
 
