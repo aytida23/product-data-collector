@@ -329,7 +329,8 @@ def get_next_parent_page_link():
     last_page = int(bottom_next_page_bar.find("span", {'class' : 'pagnDisabled'}).text.strip())
     for i in range(1, last_page+1):
         link = 'https://www.amazon.in/kurti-Clothing-Accessories/s?ie=UTF8&page={}&rh=n%3A1571271031%2Ck%3Akurti'.format(i)
-    return(link)
+        page_linkss = kurti_read(link)
+    return(page_linkss)
         
     
 
