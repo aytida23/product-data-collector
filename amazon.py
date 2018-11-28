@@ -265,7 +265,7 @@ def get_product_price(product_link):
         product_link_open = requests.get(each_product, headers=headrs)
         product_soup = BeautifulSoup(product_link_open.content, 'lxml')
         each_product_price = product_soup.find("div", {'id' : 'desktop_unifiedPrice'})
-        prices = each_product_prices.find("span", {'class' : 'a-size-medium a-color-price'})
+        prices = each_product_price.find("span", {'class' : 'a-size-medium a-color-price'})
         product_price.append(prices.text.strip())
         count += 1
         
