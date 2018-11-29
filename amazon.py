@@ -11,7 +11,6 @@ import logging
 from fake_useragent import UserAgent
 from multiprocessing import Pool
 import os
-import hashlib
 
 
 def get_page_soup(link):
@@ -177,10 +176,12 @@ def read_product_page_data(link):
         product_price = get_product_price(soup)
         product_rating = get_product_rating(soup)
         product_review = get_product_review(soup)
-        #print([product_title, product_price, product_rating, product_review])
-        return [link, product_title, product_price, product_rating, product_review]
+        print([product_title, product_price, product_rating, product_review])
+        return [link, product_title, product_price, product_rating,
+                product_review]
     except Exception as e:
         logging.error(str(e), exc_info=1)
+        LEFT_OVER_LINK.append(link)
         print(link)
 
 
@@ -196,7 +197,7 @@ def full_data_search_page(search_page_link):
         for link in all_product_links:
             individual_product = read_product_page_data(link)
             if individual_product:
-                f.write(",".join(map(str, individual_product)))
+                f.write(",".join(map(str, individual_product))+"\n")
 
 
 def create_file_ifnotexist(filename):
@@ -234,6 +235,7 @@ def convert_to_dataframe(list_of_list):
 
 
 if __name__ == '__main__':
+    LEFT_OVER_LINK = []
     PROXY_LIST = read_proxy_file()
     PARENT_LINK = 'https://www.amazon.in/kurti-Clothing-Accessories/s?ie=UTF8&page=1&rh=n%3A1571271031%2Ck%3Akurti'
     get_all_product_data(PARENT_LINK)
