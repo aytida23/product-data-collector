@@ -239,4 +239,3 @@ if __name__ == '__main__':
     PROXY_LIST = read_proxy_file()
     PARENT_LINK = 'https://www.amazon.in/kurti-Clothing-Accessories/s?ie=UTF8&page=1&rh=n%3A1571271031%2Ck%3Akurti'
     get_all_product_data(PARENT_LINK)
-
