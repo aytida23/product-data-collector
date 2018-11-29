@@ -3,11 +3,15 @@ Amazon product total number of comments collector
 '''
 # Importing libraries
 import requests
-import urllib.request as urllib2
 import re
 import random
 from bs4 import BeautifulSoup
 import pandas as pd
+import logging
+from fake_useragent import UserAgent
+from multiprocessing import Pool
+import os
+import hashlib
 
 
 def get_page_soup(link):
@@ -16,17 +20,54 @@ def get_page_soup(link):
     :param link:string: http link
     :return: bs4 soup
     """
-    product_link_open = requests.get(link, headers=headerrs())
+    product_link_open = requests.get(link, headers=headerrs(), proxies=proxies())
+    print(product_link_open.status_code)
     return BeautifulSoup(product_link_open.content, 'lxml')
+
+
+def read_proxy_file():
+    proxy_list = []
+    with open("proxies.txt") as f:
+        raw_data = f.read()
+        proxies_list = raw_data.split("\n")
+        for proxy in proxies_list:
+            if check_proxy_validity(proxy):
+                proxy_list.append({'http': proxy})
+    return proxy_list
+
+
+def check_proxy_validity(ip):
+    """
+    checks validity of a proxy address
+    :param ip: string
+    :return: bool
+    """
+    try:
+        status = requests.get("http://google.com", headers=headerrs(), proxies={'http': ip}, timeout=0.5)
+        if str(status.status_code) == '200':
+            return True
+        return False
+    except Exception:
+        return False
+
+
+def proxies():
+    """
+    :return: string
+    """
+    try:
+        return random.choice(PROXY_LIST)
+    except NameError:
+        assert "SET PROXY_LIST=read_proxy_file()"
 
 
 def headerrs():
     """
     return different random headers
     """
+    ua = UserAgent()
 
-    head1 = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 '
-                           'Safari/537.11',
+    head1 = {'User-Agent': ua.random,
              'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
              'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
              'Accept-Encoding': 'none',
@@ -34,41 +75,7 @@ def headerrs():
              'Connection': 'keep-alive'
              }
 
-    head2 = {'User-Agent': 'Mozilla/5.0 (Windows; U; MSIE 9.0; Windows NT 9.0; en-US)',
-             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-             'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
-             'Accept-Encoding': 'none',
-             'Accept-Language': 'en-US,en;q=0.8',
-             'Connection': 'keep-alive'
-             }
-
-    head3 = {'User-Agent': 'Mozilla/5.0 (compatible; MSIE 10.0; Macintosh; Intel Mac OS X 10_7_3; Trident/6.0)',
-             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-             'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
-             'Accept-Encoding': 'none',
-             'Accept-Language': 'en-US,en;q=0.8',
-             'Connection': 'keep-alive'
-             }
-
-    head4 = {'User-Agent': 'Opera/9.80 (X11; Linux i686; U; ru) Presto/2.8.131 Version/11.11',
-             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-             'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
-             'Accept-Encoding': 'none',
-             'Accept-Language': 'en-US,en;q=0.8',
-             'Connection': 'keep-alive'
-             }
-
-    head5 = {'User-Agent': 'Mozilla/5.0 (iPad; CPU OS 6_0 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) '
-                           'Version/6.0 Mobile/10A5355d Safari/8536.25',
-             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-             'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
-             'Accept-Encoding': 'none',
-             'Accept-Language': 'en-US,en;q=0.8',
-             'Connection': 'keep-alive'}
-
-    headrs = random.choice([head1,head2,head3,head4,head5])
-
-    return headrs
+    return head1
 
 
 def get_product_link_from_page(search_page_link):
@@ -77,7 +84,7 @@ def get_product_link_from_page(search_page_link):
     :return:list: a list of strings of web links
     """
     get_links = []
-    kurti_page = requests.get(search_page_link, headers=headerrs())
+    kurti_page = requests.get(search_page_link, headers=headerrs(), proxies=proxies())
     kurti_soup = BeautifulSoup(kurti_page.content, 'lxml')
     all_kurti_links = kurti_soup.find_all("a")
     for each_kurti_link in all_kurti_links:
@@ -138,35 +145,6 @@ def get_product_price(product_page_soup):
     return prices.text.strip()
 
 
-'''def fetch_product_review_link(product_link):
-    """
-    fetch reviews page lin from each product link page.
-    """
-    
-    reviews_links = []
-    for each_product in product_link:
-        each_product_review_link = re.sub(r'/dp/','/product-reviews/', each_product)
-        reviews_links.append(each_product_review_link)
-        
-    return list(set(reviews_links))
-
-
-    def fetch_max_page_limit(product_reviews_link):
-    """
-    fetch each individual comment from each product review page
-    """
-
-    max_page_number = []
-    for link in product_reviews_link:
-        headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.90 Safari/537.36'}
-        review_link_open = requests.get(link, headers=headers)
-        review_soup = BeautifulSoup(review_link_open.content, 'lxml')
-        page_numbers = review_soup.find_all("li", {'data-reftag' : 'cm_cr_arp_d_paging_btm'})
-        for each_page_num in page_numbers:
-            max_page_number.append((each_page_num).text)
-    return(max_page_number)'''
-
-
 def get_next_parent_page_link(parent_link):
     """
     get the next page containing catalog of product..in real life this is the page 2,3,4 of the search result
@@ -176,7 +154,7 @@ def get_next_parent_page_link(parent_link):
 
     page_linkss = []
     # parent_link = 'https://www.amazon.in/kurti-Clothing-Accessories/s?ie=UTF8&page=1&rh=n%3A1571271031%2Ck%3Akurti'
-    kurti_page = requests.get(parent_link, headers=headerrs())
+    kurti_page = requests.get(parent_link, headers=headerrs(), proxies=proxies())
     kurti_soup = BeautifulSoup(kurti_page.content, 'lxml')
     bottom_next_page_bar = kurti_soup.find("div", {'id': 'centerBelowMinus'})
     last_page = int(bottom_next_page_bar.find("span", {'class': 'pagnDisabled'}).text.strip())
@@ -192,13 +170,44 @@ def read_product_page_data(link):
     :param link:string: http link
     :return:string
     """
-    soup = get_page_soup(link)
-    product_title = get_product_title(soup)
-    product_price = get_product_price(soup)
-    product_rating = get_product_rating(soup)
-    product_review = get_product_review(soup)
 
-    return [product_title, product_price, product_rating, product_review]
+    try:
+        soup = get_page_soup(link)
+        product_title = get_product_title(soup)
+        product_price = get_product_price(soup)
+        product_rating = get_product_rating(soup)
+        product_review = get_product_review(soup)
+        #print([product_title, product_price, product_rating, product_review])
+        return [link, product_title, product_price, product_rating, product_review]
+    except Exception as e:
+        logging.error(str(e), exc_info=1)
+        print(link)
+
+
+def full_data_search_page(search_page_link):
+    """
+
+    :param search_page_link:
+    :return:
+    """
+    all_product_links = get_product_link_from_page(search_page_link)
+    create_file_ifnotexist(search_page_link.replace("/",""))
+    with open(search_page_link.replace("/", ""), "a") as f:
+        for link in all_product_links:
+            individual_product = read_product_page_data(link)
+            if individual_product:
+                f.write(",".join(map(str, individual_product)))
+
+
+def create_file_ifnotexist(filename):
+    """
+
+    :param filename:
+    :return:
+    """
+    if not os.path.exists(filename):
+        f = open(filename, "w")
+        f.close()
 
 
 def get_all_product_data(parent_link):
@@ -207,30 +216,25 @@ def get_all_product_data(parent_link):
     :param parent_link:string: http
     :return:list of list
     """
-    all_search_page_links = get_next_parent_page_link(parent_link)
-    full_data = []
-    for search_page in all_search_page_links:
-        all_product_links = get_product_link_from_page(search_page)
-        for link in all_product_links:
-            individual_product = read_product_page_data(link)
-            full_data.append(individual_product)
-    return full_data
+    all_search_page_links = list(set(get_next_parent_page_link(parent_link)))
+    #for link in all_search_page_links:
+    #    create_file_ifnotexist(link)
+    with Pool(50) as p:
+        p.map(full_data_search_page, all_search_page_links)
 
 
 def convert_to_dataframe(list_of_list):
     """
-
     :param list_of_list: ["product_title","product_price","product_rating","product_review"]
     :return: pandas.DataFame
     """
-
-    header = ["product_title","product_price","product_rating","product_review"]
+    header = ["product_title", "product_price", "product_rating", "product_review"]
     df = pd.DataFrame(list_of_list, columns=header)
     return df
 
 
 if __name__ == '__main__':
+    PROXY_LIST = read_proxy_file()
     PARENT_LINK = 'https://www.amazon.in/kurti-Clothing-Accessories/s?ie=UTF8&page=1&rh=n%3A1571271031%2Ck%3Akurti'
-    data = get_all_product_data(PARENT_LINK)
-    print(convert_to_dataframe(data))
+    get_all_product_data(PARENT_LINK)
 
