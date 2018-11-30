@@ -111,6 +111,51 @@ def get_product_title(product_page_soup):
     return productname.find("span", {'class' : '_35KyD6'}).text.strip()
 
 
+def get_product_rating(product_page_soup):
+    """
+    get each product rating
+    :param product_page_soup: bs4 soup: soup of a product page
+    :return: string: product rating
+    """
+    each_product_rating = product_page_soup.find("div", {'class' : 'niH0FQ'})
+    try:
+        return each_product_rating.find("span", {'class' : '_2_KrJI'}).text.strip()
+
+    except AttributeError:
+        return None
+
+
+def get_product_review(product_page_soup):
+    """
+    get product total number of review
+    :param product_page_soup: bs4 soup: soup of a product page
+    :return:string
+    """
+    each_product_review = product_page_soup.find("div", {'class' : 'niH0FQ'})
+    return each_product_review.find("span", {'class' : '_38sUEc'}).text.strip()
+
+
+def get_product_price(product_page_soup):
+    """
+    get product price
+    :param product_page_soup: bs4 soup: soup of a product page
+    :return: string
+    """
+
+    each_product_price = product_page_soup.find("div", {'class' : '_2i1QSc'})
+    return each_product_price.find("div", {'class' : '_1vC4OE _3qQ9m1'}).text.strip()
+
+
+def get_product_discount(product_page_soup):
+    """
+    get product discount
+    :param product_page_soup: bs4 soup: soup of a product page
+    :return: string
+    """
+
+    each_product_price = product_page_soup.find("div", {'class' : '_2i1QSc'})
+    return each_product_price.find("div", {'class' : 'VGWI6T _1iCvwn'}).text.st
+
 
 def get_next_parent_page_link(parent_link):
     """
@@ -139,8 +184,6 @@ def get_next_parent_page_link(parent_link):
     return page_linkss
 
 
-
-
 def read_product_page_data(link):
     """
     get all values from a product page data
@@ -151,8 +194,12 @@ def read_product_page_data(link):
     try:
         soup = get_page_soup(link)
         product_title = get_product_title(soup)
-        print([product_title])
-        return([link, product_title])
+        product_price = get_product_price(soup)
+        product_discount = get_product_discount(soup)
+        product_rating = get_product_rating(soup)
+        product_review = get_product_review(soup)
+        print([product_title, product_price, product_discount, product_rating, product_review])
+        return([link, product_title, product_price, product_discount, product_rating, product_review])
     except Exception as e:
         logging.error(str(e), exc_info=1)
         LEFT_OVER_LINK.append(link)
@@ -192,13 +239,25 @@ def get_all_product_data(parent_link):
     :return:list of list
     """
     all_search_page_links = list(set(get_next_parent_page_link(parent_link)))
-    
-    
-    
+    #for link in all_search_page_links:
+        #create_file_ifnotexist(link)
+    with Pool(40) as p:
+        p.map(full_data_search_page, all_search_page_links)
 
+
+def convert_to_dataframe(list_of_list):
+    """
+    :param list_of_list: ["product_title","product_price","product_discount","product_rating","product_review"]
+    :return: pandas.DataFame
+    """
+    header = ["product_title", "product_price", "product_discount", "product_rating", "product_review"]
+    df = pd.DataFrame(list_of_list, columns=header)
+    return df        
+
+    
 if __name__ == '__main__':
+    LEFT_OVER_LINK = []
     PROXY_LIST = read_proxy_file()
     PARENT_LINK = 'https://www.flipkart.com/women/kurtas-kurtis/pr?sid=2oq%2Cc1r%2C3pj%2Cua6&page=1'
-    #get_product_link_from_page(PARENT_LINK)
-    print(get_next_parent_page_link(PARENT_LINK))
+    get_all_product_data(PARENT_LINK)
     
