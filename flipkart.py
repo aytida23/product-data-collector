@@ -131,12 +131,11 @@ def get_next_parent_page_link(parent_link):
     num_of_pages = int(max(num_of_pages))
     for i in range(1, 3):
         link = 'https://www.flipkart.com/women/kurtas-kurtis/pr?sid=2oq%2Cc1r%2C3pj%2Cua6&page='+str(i)
-        link = requests.get(link, headers=headerrs(), proxies=proxies())
-        if str(link.status_code) == '200':
-            print(link)
+        linkz = requests.get(link, headers=headerrs(), proxies=proxies())
+        if str(linkz.status_code) == '200':
             page_linkss.append(link)
         else:
-            print("OOPS! BAD LUCK FOR LINK")
+            pass
     return page_linkss
 
 
@@ -201,5 +200,5 @@ if __name__ == '__main__':
     PROXY_LIST = read_proxy_file()
     PARENT_LINK = 'https://www.flipkart.com/women/kurtas-kurtis/pr?sid=2oq%2Cc1r%2C3pj%2Cua6&page=1'
     #get_product_link_from_page(PARENT_LINK)
-    get_next_parent_page_link(PARENT_LINK)
+    print(get_next_parent_page_link(PARENT_LINK))
     
