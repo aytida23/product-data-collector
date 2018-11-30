@@ -135,7 +135,7 @@ def get_next_parent_page_link(parent_link):
         if str(linkz.status_code) == '200':
             page_linkss.append(link)
         else:
-            pass
+            break
     return page_linkss
 
 
