@@ -129,7 +129,7 @@ def get_next_parent_page_link(parent_link):
     num_of_pages = re.sub(',','',num_of_pages)
     num_of_pages = re.split('[\s]', num_of_pages)
     num_of_pages = int(max(num_of_pages))
-    for i in range(1, 3):
+    for i in range(1, num_of_pages+1):
         link = 'https://www.flipkart.com/women/kurtas-kurtis/pr?sid=2oq%2Cc1r%2C3pj%2Cua6&page='+str(i)
         linkz = requests.get(link, headers=headerrs(), proxies=proxies())
         if str(linkz.status_code) == '200':
