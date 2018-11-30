@@ -132,7 +132,7 @@ def get_next_parent_page_link(parent_link):
     for i in range(1, 3):
         link = 'https://www.flipkart.com/women/kurtas-kurtis/pr?sid=2oq%2Cc1r%2C3pj%2Cua6&page='+str(i)
         link = requests.get(link, headers=headerrs(), proxies=proxies())
-        if link.status_code == '200':
+        if str(link.status_code) == '200':
             print(link)
             page_linkss.append(link)
         else:
@@ -202,3 +202,4 @@ if __name__ == '__main__':
     PARENT_LINK = 'https://www.flipkart.com/women/kurtas-kurtis/pr?sid=2oq%2Cc1r%2C3pj%2Cua6&page=1'
     #get_product_link_from_page(PARENT_LINK)
     get_next_parent_page_link(PARENT_LINK)
+    
