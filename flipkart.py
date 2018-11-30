@@ -128,9 +128,10 @@ def get_next_parent_page_link(parent_link):
     num_of_pages = ''.join(num_of_page).replace("of", "")
     num_of_pages = re.sub(',','',num_of_pages)
     num_of_pages = re.split('[\s]', num_of_pages)
-    num_of_pages = max(num_of_pages)
-    for i in range(1, int(num_of_pages+1)):
-        link = 'https://www.flipkart.com/women/kurtas-kurtis/pr?sid=2oq%2Cc1r%2C3pj%2Cua6&page={}'.format(i)
+    num_of_pages = int(max(num_of_pages))
+    for i in range(1, (num_of_pages+1)):
+        link = 'https://www.flipkart.com/women/kurtas-kurtis/pr?sid=2oq%2Cc1r%2C3pj%2Cua6&page=%s'+str(i)
+        link = requests.get(link, headers=headerrs(), proxies=proxies())
         if link.status_code == '200':
             print(link)
             pages_linkss.append(link)
