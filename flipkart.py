@@ -131,7 +131,7 @@ def get_next_parent_page_link(parent_link):
     num_of_pages = int(max(num_of_pages))
     for i in range(1, (num_of_pages+1)):
         link = 'https://www.flipkart.com/women/kurtas-kurtis/pr?sid=2oq%2Cc1r%2C3pj%2Cua6&page=%s'+str(i)
-        link = requests.get(link, headers=headerrs(), proxies=proxies())
+        link = requests.get(link, headers=headerrs(), proxies=proxies(), allow_redirects=False)
         if link.status_code == '200':
             print(link)
             pages_linkss.append(link)
