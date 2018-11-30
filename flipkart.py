@@ -137,7 +137,7 @@ def get_next_parent_page_link(parent_link):
             page_linkss.append(link)
         else:
             print("OOPS! BAD LUCK FOR LINK")
-    return(page_linkss)
+    return page_linkss
 
 
 
