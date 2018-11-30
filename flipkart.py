@@ -131,7 +131,7 @@ def get_next_parent_page_link(parent_link):
     num_of_pages = int(max(num_of_pages))
     for i in range(1, (num_of_pages+1)):
         link = 'https://www.flipkart.com/women/kurtas-kurtis/pr?sid=2oq%2Cc1r%2C3pj%2Cua6&page='+str(i)
-        link = requests.get(link, headers=headerrs(), proxies=proxies())
+        link = requests.get(link)
         if link.status_code == '200':
             print(link)
             page_linkss.append(link)
@@ -153,6 +153,7 @@ def read_product_page_data(link):
         soup = get_page_soup(link)
         product_title = get_product_title(soup)
         print([product_title])
+        return([link, product_title])
     except Exception as e:
         logging.error(str(e), exc_info=1)
         LEFT_OVER_LINK.append(link)
