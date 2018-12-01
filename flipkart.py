@@ -165,22 +165,23 @@ def get_next_parent_page_link(parent_link):
     """
 
     page_linkss = []
-    kurti_page = requests.get(parent_link, headers=headerrs(), proxies=proxies())
-    kurti_soup = BeautifulSoup(kurti_page.content, 'lxml')
-    total_page = kurti_soup.find("div", {'class' : '_2zg3yZ'})
-    pages = total_page.find("span").text.strip()
-    num_of_page = pages.replace("Page", "")
-    num_of_pages = ''.join(num_of_page).replace("of", "")
-    num_of_pages = re.sub(',','',num_of_pages)
-    num_of_pages = re.split('[\s]', num_of_pages)
-    num_of_pages = int(max(num_of_pages))
-    for i in range(1, num_of_pages+1):
+    #kurti_page = requests.get(parent_link, headers=headerrs(), proxies=proxies())
+    #kurti_soup = BeautifulSoup(kurti_page.content, 'lxml')
+    #total_page = kurti_soup.find("div", {'class' : '_2zg3yZ'})
+    #pages = total_page.find("span").text.strip()
+    #num_of_page = pages.replace("Page", "")
+    #num_of_pages = ''.join(num_of_page).replace("of", "")
+    #num_of_pages = re.sub(',','',num_of_pages)
+    #num_of_pages = re.split('[\s]', num_of_pages)
+    #num_of_pages = int(max(num_of_pages))
+    for i in range(1, 51):
         link = 'https://www.flipkart.com/women/kurtas-kurtis/pr?sid=2oq%2Cc1r%2C3pj%2Cua6&page='+str(i)
-        linkz = requests.get(link, headers=headerrs(), proxies=proxies())
-        if str(linkz.status_code) == '200':
-            page_linkss.append(link)
-        else:
-            break
+        #linkz = requests.get(link, headers=headerrs(), proxies=proxies())
+        #if str(linkz.status_code) == '200':
+        page_linkss.append(link)
+
+        #else:
+            #break
     return page_linkss
 
 
