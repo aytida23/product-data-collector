@@ -25,7 +25,7 @@ def get_page_soup(link):
         product_link_open = requests.get(link, headers=headerrs(), proxies=proxies())
         print(product_link_open.status_code)
     except requests.exceptions.ConnectionError:
-        r.status_code = "Connection refused"
+        product_link_open.status_code = "Connection refused"
     
     return BeautifulSoup(product_link_open.content, 'lxml')
 
