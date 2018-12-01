@@ -12,6 +12,7 @@ import logging
 from fake_useragent import UserAgent
 from multiprocessing import Pool
 import os
+import time
 
 
 def get_page_soup(link):
@@ -20,8 +21,19 @@ def get_page_soup(link):
     :param link:string: http link
     :return: bs4 soup
     """
-    product_link_open = requests.get(link, headers=headerrs(), proxies=proxies())
-    print(product_link_open.status_code)
+    product_link_open = ''
+    while product_link_open == '':
+        try:
+            product_link_open = requests.get(link, headers=headerrs(), proxies=proxies())
+            print(product_link_open.status_code)
+            break
+        except:
+            print("Connection refused by the server..")
+            print("Let me sleep for 5 seconds")
+            print("ZZzzzz...")
+            time.sleep(5)
+            print("Was a nice sleep, now let me continue...")
+            continue   
     return BeautifulSoup(product_link_open.content, 'lxml')
 
 
@@ -118,11 +130,7 @@ def get_product_rating(product_page_soup):
     :return: string: product rating
     """
     each_product_rating = product_page_soup.find("div", {'class' : 'niH0FQ'})
-    try:
-        return each_product_rating.find("span", {'class' : '_2_KrJI'}).text.strip()
-
-    except AttributeError:
-        return None
+    return each_product_rating.find("span", {'class' : '_2_KrJI'}).text.strip()
 
 
 def get_product_review(product_page_soup):
