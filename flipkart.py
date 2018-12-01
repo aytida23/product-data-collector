@@ -12,9 +12,6 @@ import logging
 from fake_useragent import UserAgent
 from multiprocessing import Pool
 import os
-from requests.adapters import HTTPAdapter
-from requests.packages.urllib3.util.retry import Retry
-
 
 def get_page_soup(link):
     """
@@ -22,12 +19,7 @@ def get_page_soup(link):
     :param link:string: http link
     :return: bs4 soup
     """
-    session = requests.Session()
-    retry = Retry(connect=3, backoff_factor=0.5)
-    adapter = HTTPAdapter(max_retries=retry)
-    session.mount('http://', adapter)
-    session.mount('https://', adapter)
-    product_link_open = session.get(link, headers=headerrs(), proxies=proxies())
+    product_link_open = requests.get(link, headers=headerrs(), proxies=proxies(), timeout=10)
     print(product_link_open.status_code)
     return BeautifulSoup(product_link_open.content, 'lxml')
 
