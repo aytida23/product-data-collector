@@ -12,6 +12,7 @@ import logging
 from fake_useragent import UserAgent
 from multiprocessing import Pool
 import os
+import time
 
 def get_page_soup(link):
     """
@@ -19,8 +20,19 @@ def get_page_soup(link):
     :param link:string: http link
     :return: bs4 soup
     """
-    product_link_open = requests.get(link, headers=headerrs(), proxies=proxies(), timeout=10)
-    print(product_link_open.status_code)
+    product_link_open = ''
+    while product_link_open == '':
+        try:
+            
+            product_link_open = requests.get(link, headers=headerrs(), proxies=proxies(), timeout=10)
+            print(product_link_open.status_code)
+            break
+        except:
+            print("CONNECTION REFUSED BY THE SERVER!!!")
+            print("Sleeping\nZZZZzzzzzz. . .")
+            time.sleep(10)
+            print("Woke up from a pleasant sleep, now let me continue. . .")
+            continue
     return BeautifulSoup(product_link_open.content, 'lxml')
 
 
@@ -83,7 +95,7 @@ def get_product_link_from_page(search_page_link):
     :return:list: a list of strings of web links
     """
     get_links = []
-    kurti_page = requests.get(search_page_link, headers=headerrs(), proxies=proxies())
+    kurti_page = requests.get(search_page_link, headers=headerrs(), proxies=proxies(), timeout=10)
     kurti_soup = BeautifulSoup(kurti_page.content, 'lxml')
     all_kurti_links = kurti_soup.find_all("a")
     for each_kurti_link in all_kurti_links:
@@ -214,7 +226,7 @@ def full_data_search_page(search_page_link):
         for link in all_product_links:
             individual_product = read_product_page_data(link)
             if individual_product:
-                f.write(",".join(individual_product).encode('utf-8').strip())+"\n")
+                f.write(",".join(individual_product).encode('utf-8').strip()+"\n")
 
 
 def create_file_ifnotexist(filename):
