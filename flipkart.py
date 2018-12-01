@@ -20,19 +20,14 @@ def get_page_soup(link):
     :param link:string: http link
     :return: bs4 soup
     """
-    product_link_open = ''
-    while product_link_open == '':
-        try:
+    
+    try:
             
-            product_link_open = requests.get(link, headers=headerrs(), proxies=proxies(), timeout=10)
-            print(product_link_open.status_code)
-            break
-        except:
-            print("CONNECTION REFUSED BY THE SERVER!!!")
-            print("Sleeping\nZZZZzzzzzz. . .")
-            time.sleep(10)
-            print("Woke up from a pleasant sleep, now let me continue. . .")
-            continue
+        product_link_open = requests.get(link, headers=headerrs(), proxies=proxies(), timeout=10)
+        print(product_link_open.status_code)
+    except requests.exceptions.ConnectionError:
+        r.status_code = "Connection refused"
+    
     return BeautifulSoup(product_link_open.content, 'lxml')
 
 
@@ -226,7 +221,7 @@ def full_data_search_page(search_page_link):
         for link in all_product_links:
             individual_product = read_product_page_data(link)
             if individual_product:
-                f.write(u",".join(individual_product).encode('utf-8').strip()+"\n")
+                f.write(u",".join(individual_product).encode('utf-8').strip()+b"\n")
 
 
 def create_file_ifnotexist(filename):
@@ -249,7 +244,7 @@ def get_all_product_data(parent_link):
     all_search_page_links = list(set(get_next_parent_page_link(parent_link)))
     #for link in all_search_page_links:
         #create_file_ifnotexist(link)
-    with Pool(5) as p:
+    with Pool(4) as p:
         p.map(full_data_search_page, all_search_page_links)
 
 
