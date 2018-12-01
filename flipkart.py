@@ -48,7 +48,7 @@ def check_proxy_validity(ip):
     :return: bool
     """
     try:
-        status = requests.get("https://www.flipkart.com", headers=headerrs(), proxies={'http': ip}, timeout=0.5)
+        status = requests.get("https://www.google.co.in", headers=headerrs(), proxies={'http': ip}, timeout=0.5)
         if str(status.status_code) == '200':
             return True
         return False
@@ -243,7 +243,7 @@ def get_all_product_data(parent_link):
     all_search_page_links = list(set(get_next_parent_page_link(parent_link)))
     #for link in all_search_page_links:
         #create_file_ifnotexist(link)
-    with Pool(4) as p:
+    with Pool(3) as p:
         p.map(full_data_search_page, all_search_page_links)
 
 
