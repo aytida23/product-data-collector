@@ -12,7 +12,6 @@ import logging
 from fake_useragent import UserAgent
 from multiprocessing import Pool
 import os
-import time
 
 def get_page_soup(link):
     """
@@ -23,7 +22,7 @@ def get_page_soup(link):
     
     try:
             
-        product_link_open = requests.get(link, headers=headerrs(), proxies=proxies(), timeout=10)
+        product_link_open = requests.get(link, headers=headerrs(), proxies=proxies())
         print(product_link_open.status_code)
     except requests.exceptions.ConnectionError:
         r.status_code = "Connection refused"
