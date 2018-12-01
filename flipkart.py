@@ -226,7 +226,7 @@ def full_data_search_page(search_page_link):
         for link in all_product_links:
             individual_product = read_product_page_data(link)
             if individual_product:
-                f.write(",".join(individual_product).encode('utf-8').strip()+"\n")
+                f.write(u",".join(individual_product).encode('utf-8').strip()+"\n")
 
 
 def create_file_ifnotexist(filename):
