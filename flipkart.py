@@ -242,7 +242,7 @@ def get_all_product_data(parent_link):
     all_search_page_links = list(set(get_next_parent_page_link(parent_link)))
     #for link in all_search_page_links:
         #create_file_ifnotexist(link)
-    with Pool(10) as p:
+    with Pool(5) as p:
         p.map(full_data_search_page, all_search_page_links)
 
 
