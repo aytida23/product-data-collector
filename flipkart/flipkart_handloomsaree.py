@@ -48,7 +48,7 @@ def check_proxy_validity(ip):
     :return: bool
     """
     try:
-        status = requests.get("https://www.google.co.in", headers=headerrs(), proxies={'http': ip}, timeout=0.5)
+        status = requests.get("https://www.flipkart.com", headers=headerrs(), proxies={'http': ip}, timeout=0.5)
         if str(status.status_code) == '200':
             return True
         return False
@@ -113,7 +113,10 @@ def get_product_title(product_page_soup):
     :return: string: product name
     """
     productname = product_page_soup.find("div", {'class' : '_29OxBi'})
-    return productname.find("span", {'class' : '_35KyD6'}).text.strip()
+    if productname.find("span", {'class' : '_35KyD6'}):
+        return productname.find("span", {'class' : '_35KyD6'}).text.strip()
+    elif productname.find("h1", {'class' : '_9E25nV'}):
+        return productname.find("h1", {'class' : '_9E25nV'}).text.strip()
 
 
 def get_product_rating(product_page_soup):
@@ -122,8 +125,13 @@ def get_product_rating(product_page_soup):
     :param product_page_soup: bs4 soup: soup of a product page
     :return: string: product rating
     """
-    each_product_rating = product_page_soup.find("div", {'class' : 'niH0FQ'})
-    return each_product_rating.find("span", {'class' : '_2_KrJI'}).text.strip()
+    each_product_rating = product_page_soup.find("div", {'class' : '_29OxBi'})
+    if each_product_rating.find("span", {'class' : '_2_KrJI'}):
+        return each_product_rating.find("span", {'class' : '_2_KrJI'}).text.strip()
+    elif each_product_rating.find("div", {'class' : '_1UZzwh'}):
+        return each_product_rating.find("div", {'class' : '_1UZzwh'}).text.strip()
+    else:
+        return None
 
 
 def get_product_review(product_page_soup):
@@ -132,8 +140,11 @@ def get_product_review(product_page_soup):
     :param product_page_soup: bs4 soup: soup of a product page
     :return:string
     """
-    each_product_review = product_page_soup.find("div", {'class' : 'niH0FQ'})
-    return each_product_review.find("span", {'class' : '_38sUEc'}).text.strip()
+    each_product_review = product_page_soup.find("div", {'class' : '_29OxBi'})
+    if each_product_review.find("span", {'class' : '_38sUEc'}):
+        return each_product_review.find("span", {'class' : '_38sUEc'}).text.strip()
+    else:
+        return None
 
 
 def get_product_price(product_page_soup):
@@ -143,7 +154,7 @@ def get_product_price(product_page_soup):
     :return: string
     """
 
-    each_product_price = product_page_soup.find("div", {'class' : '_2i1QSc'})
+    each_product_price = product_page_soup.find("div", {'class' : '_29OxBi'})
     return each_product_price.find("div", {'class' : '_1vC4OE _3qQ9m1'}).text.strip()
 
 
@@ -154,8 +165,11 @@ def get_product_discount(product_page_soup):
     :return: string
     """
 
-    each_product_price = product_page_soup.find("div", {'class' : '_2i1QSc'})
-    return each_product_price.find("div", {'class' : 'VGWI6T _1iCvwn'}).text.strip()
+    each_product_price = product_page_soup.find("div", {'class' : '_29OxBi'})
+    if each_product_price.find("div", {'class' : 'VGWI6T _1iCvwn'}):
+        return each_product_price.find("div", {'class' : 'VGWI6T _1iCvwn'}).text.strip()
+    else:
+        return None
 
 
 def get_next_parent_page_link(parent_link):
@@ -176,7 +190,7 @@ def get_next_parent_page_link(parent_link):
     #num_of_pages = re.split('[\s]', num_of_pages)
     #num_of_pages = int(max(num_of_pages))
     for i in range(1, 51):
-        link = 'https://www.flipkart.com/women/kurtas-kurtis/pr?sid=2oq%2Cc1r%2C3pj%2Cua6&page='+str(i)
+        link = 'https://www.flipkart.com/search?q=handloom+sarees&sid=2oq%2Cc1r%2C3pj%2C7od&as=on&as-show=on&otracker=AS_QueryStore_OrganicAutoSuggest_0_8&otracker1=AS_QueryStore_OrganicAutoSuggest_0_8&as-pos=0&as-type=RECENT&as-searchtext=handloom&page='+str(i)
         #linkz = requests.get(link, headers=headerrs(), proxies=proxies())
         #if str(linkz.status_code) == '200':
         page_linkss.append(link)
@@ -220,7 +234,7 @@ def full_data_search_page(search_page_link):
         for link in all_product_links:
             individual_product = read_product_page_data(link)
             if individual_product:
-                f.write(",".join(individual_product)+"\n")
+                f.write(",".join(map(str,individual_product))+"\n")
 
 
 def create_file_ifnotexist(filename):
@@ -243,7 +257,7 @@ def get_all_product_data(parent_link):
     all_search_page_links = list(set(get_next_parent_page_link(parent_link)))
     #for link in all_search_page_links:
         #create_file_ifnotexist(link)
-    with Pool(3) as p:
+    with Pool(5) as p:
         p.map(full_data_search_page, all_search_page_links)
 
 
@@ -260,6 +274,6 @@ def convert_to_dataframe(list_of_list):
 if __name__ == '__main__':
     LEFT_OVER_LINK = []
     PROXY_LIST = read_proxy_file()
-    PARENT_LINK = 'https://www.flipkart.com/women/kurtas-kurtis/pr?sid=2oq%2Cc1r%2C3pj%2Cua6&page=1'
+    PARENT_LINK = 'https://www.flipkart.com/search?q=handloom+sarees&sid=2oq%2Cc1r%2C3pj%2C7od&as=on&as-show=on&otracker=AS_QueryStore_OrganicAutoSuggest_0_8&otracker1=AS_QueryStore_OrganicAutoSuggest_0_8&as-pos=0&as-type=RECENT&as-searchtext=handloom&page=1'
     get_all_product_data(PARENT_LINK)
     

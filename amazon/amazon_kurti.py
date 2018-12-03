@@ -1,5 +1,5 @@
 '''
-Amazon product total number of comments collector
+Amazon product info collector
 '''
 # Importing libraries
 import requests
