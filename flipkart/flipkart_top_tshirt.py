@@ -130,8 +130,6 @@ def get_product_rating(product_page_soup):
         return each_product_rating.find("span", {'class' : '_2_KrJI'}).text.strip()
     elif each_product_rating.find("div", {'class' : '_1UZzwh'}):
         return each_product_rating.find("div", {'class' : '_1UZzwh'}).text.strip()
-    else:
-        return None
 
 
 def get_product_review(product_page_soup):
@@ -190,7 +188,7 @@ def get_next_parent_page_link(parent_link):
     #num_of_pages = re.split('[\s]', num_of_pages)
     #num_of_pages = int(max(num_of_pages))
     for i in range(1, 51):
-        link = 'https://www.flipkart.com/search?q=handloom+sarees&sid=2oq%2Cc1r%2C3pj%2C7od&as=on&as-show=on&otracker=AS_QueryStore_OrganicAutoSuggest_0_8&otracker1=AS_QueryStore_OrganicAutoSuggest_0_8&as-pos=0&as-type=RECENT&as-searchtext=handloom&page='+str(i)
+        link = 'https://www.flipkart.com/womens-clothing/western-wear/shirts-tops-tunics/pr?sid=2oq%2Cc1r%2Cha6%2Ccck&page='+str(i)
         #linkz = requests.get(link, headers=headerrs(), proxies=proxies())
         #if str(linkz.status_code) == '200':
         page_linkss.append(link)
@@ -274,6 +272,6 @@ def convert_to_dataframe(list_of_list):
 if __name__ == '__main__':
     LEFT_OVER_LINK = []
     PROXY_LIST = read_proxy_file()
-    PARENT_LINK = 'https://www.flipkart.com/search?q=handloom+sarees&sid=2oq%2Cc1r%2C3pj%2C7od&as=on&as-show=on&otracker=AS_QueryStore_OrganicAutoSuggest_0_8&otracker1=AS_QueryStore_OrganicAutoSuggest_0_8&as-pos=0&as-type=RECENT&as-searchtext=handloom&page=1'
+    PARENT_LINK = 'https://www.flipkart.com/womens-clothing/western-wear/shirts-tops-tunics/pr?sid=2oq%2Cc1r%2Cha6%2Ccck&page=1'
     get_all_product_data(PARENT_LINK)
     
