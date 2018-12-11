@@ -90,7 +90,7 @@ def get_product_link_from_page(search_page_link):
     :return:list: a list of strings of web links
     """
     get_links = []
-    kurti_page = requests.get(search_page_link, headers=headerrs(), proxies=proxies(), timeout=10)
+    kurti_page = requests.get(search_page_link, headers=headerrs(), proxies=proxies())
     kurti_soup = BeautifulSoup(kurti_page.content, 'lxml')
     all_kurti_links = kurti_soup.find_all("a")
     for each_kurti_link in all_kurti_links:
