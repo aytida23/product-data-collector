@@ -146,7 +146,7 @@ def get_next_parent_page_link(parent_link):
 
     page_linkss = []
     for i in range(1, 20):
-        link = 'https://www.myntra.com/amp/saree?sort=popularity&rows=50&p='+str(i)
+        link = 'https://www.myntra.com/amp/women-kurtas-kurtis-suits?sort=popularity&rows=50&p='+str(i)
         page_linkss.append(link)
     return page_linkss
 
@@ -205,5 +205,5 @@ def get_all_product_data(parent_link):
 
 if __name__ == '__main__':
     PROXY_LIST = read_proxy_file()
-    PARENT_LINK = 'https://www.myntra.com/amp/saree?sort=popularity&rows=50&p=1'
+    PARENT_LINK = 'https://www.myntra.com/amp/women-kurtas-kurtis-suits?sort=popularity&rows=50&p=1'
     get_all_product_data(PARENT_LINK)

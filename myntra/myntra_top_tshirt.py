@@ -145,7 +145,7 @@ def get_next_parent_page_link(parent_link):
     """
 
     page_linkss = []
-    for i in range(1, 15):
+    for i in range(1, 20):
         link = 'https://www.myntra.com/amp/women-shirts-tops-tees?sort=popularity&rows=50&p='+str(i)
         page_linkss.append(link)
     return page_linkss
@@ -176,7 +176,7 @@ def full_data_search_page(search_page_link):
         for link in all_product_links:
             individual_product = read_product_page_data(link)
             if individual_product:
-                f.write(",\t".join(map(str,individual_product))+"\n")
+                f.write("\t".join(map(str,individual_product))+"\n")
     
 
 def create_file_ifnotexist(filename):
