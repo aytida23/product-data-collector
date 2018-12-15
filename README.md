@@ -1,1 +1,1 @@
-# comment collector
+# product data info collector
